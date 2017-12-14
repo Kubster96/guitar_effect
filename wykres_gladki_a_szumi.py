@@ -46,18 +46,19 @@ def callback2(in_data, frame_count, time_info, flag):
 
 def callback(in_data, frame_count, time_info, flag):
     global b, a, fulldata, dry_data, counter
-    audio_data = np.fromstring(in_data, dtype=np.float32)
-
-    if counter > 100:
-        f, Pxx_spec = signal.welch(audio_data,RATE, 'flattop', 1024, scaling='spectrum')
-        plt.figure()
-        plt.semilogy(f, np.sqrt(Pxx_spec))
-        plt.xlabel('frequency [Hz]')
-        plt.ylabel('Linear spectrum [V RMS]')
-        plt.show()
-
-        plt.plot(np.linspace(0,1,1024),audio_data)
-        plt.show()
+    audio_data = np.fromstring(in_data, dtype=np.float32) / 5
+    x = None
+    if counter < DROP_FIRST:
+        buffer.append(butter_bandpass_filter(audio_data, 512, 1024, RATE))
+    else:
+        buffer.append(audio_data)
+        x = butter_bandpass_filter(np.concatenate(buffer), 512, 1024, RATE)[(len(buffer)-3)*1024:]
+        buffer.pop(0)
+        if counter > 100:
+            # plt.plot(np.linspace(0, 1, frame_count), audio_data)
+            # plt.show()
+            plt.plot(np.linspace(0, 1, 3*frame_count), x)
+            plt.show()
 
 
 
