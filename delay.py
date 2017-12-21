@@ -1,3 +1,16 @@
+index = 0
+samples = []
+delay_time = 200
+number_of_repeats = 3
+samples_size = 0
+
+
+def main():
+    samples_size = (delay_time/1000) * number_of_repeats * RATE
+    
+    # reszta
+    
+
 def delay_callback(in_data, frame_count, time_info, flag):
     global samples, index
 
