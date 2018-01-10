@@ -32,18 +32,23 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=6):
     return y
 
 
-def butter_bandpass_zi(lowcut, highcut, fs, order=6):
+def butter_bandpass_zi(lowcut, highcut, fs,zi, order=6):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    zi = lfilter_zi(b, a)
-    return b, a, zi
+    b, a = butter(order, [low,high],'band',analog=False)
+    zo=zi
+    if zi is None:
+        zo = lfilter_zi(b, a)
+    return b, a, zo
 
 
-def butter_bandpass_filter_zi(data, lowcut, highcut, fs, order=6):
-    b, a, zi = butter_bandpass_zi(lowcut, highcut, fs, order=order)
-    y, z= lfilter(b, a, data, zi=zi*data[0])
+def butter_bandpass_filter_zi(data, lowcut, highcut, fs,zi, order=6):
+    b, a, zo = butter_bandpass_zi(lowcut, highcut, fs,zi, order=order)
+    if zi is None:
+        y, z= lfilter(b, a, data, zi=zo*data[0])######
+    else:
+        y, z = lfilter(b, a, data, zi=zo)
     return y,z
 
 

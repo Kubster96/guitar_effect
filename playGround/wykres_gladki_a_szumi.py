@@ -1,9 +1,9 @@
-import pyaudio
 import time
+
 import numpy as np
-from butter_transform import butter_bandpass_filter, transform
-from matplotlib import pyplot as plt
-import scipy.signal as signal
+import pyaudio
+
+from playGround.butter_transform import butter_bandpass_filter
 
 CHANNELS = 1
 RATE = 44100
@@ -54,11 +54,11 @@ def callback(in_data, frame_count, time_info, flag):
         buffer.append(audio_data)
         x = butter_bandpass_filter(np.concatenate(buffer), 512, 1024, RATE)[(len(buffer)-3)*1024:]
         buffer.pop(0)
-        if counter > 100:
-            # plt.plot(np.linspace(0, 1, frame_count), audio_data)
-            # plt.show()
-            plt.plot(np.linspace(0, 1, 3*frame_count), x)
-            plt.show()
+        # if counter > 100:
+        #     # plt.plot(np.linspace(0, 1, frame_count), audio_data)
+        #     # plt.show()
+        #     plt.plot(np.linspace(0, 1, 3*frame_count), x)
+        #     plt.show()
 
 
 
